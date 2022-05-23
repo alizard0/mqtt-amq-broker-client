@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class Application {
 
   private static String TOPIC_NAME = "mqtt-topic";
+  private static int MESSAGE_SENT = 100;
 
   public static void main(final String[] args) throws Exception {
     BlockingConnection connection = connect();
@@ -21,12 +22,16 @@ public class Application {
     connection.subscribe(topics);
 
     // Publish Messages
-    String payload = "100";
-    publishMessage(connection, TOPIC_NAME, payload);
+    for(int i = 0; i < MESSAGE_SENT; i++) {
+      publishMessage(connection, TOPIC_NAME, String.valueOf(i));
+    }
 
     // Consume messages
-    Message message1 = connection.receive(5, TimeUnit.SECONDS);
-    System.out.println("Received: " + new String(message1.getPayload()));
+    for(int i = 0; i < MESSAGE_SENT; i++) {
+      Message message = connection.receive(5, TimeUnit.SECONDS);
+      System.out.println("Received: " + new String(message.getPayload()));
+    }
+
   }
 
   private static void publishMessage(final BlockingConnection connection, final String topicName, final String payload) throws Exception {
@@ -36,6 +41,7 @@ public class Application {
   private static BlockingConnection connect() throws Exception {
     MQTT mqtt = new MQTT();
     mqtt.setHost("tcp://localhost:1883");
+    mqtt.setCleanSession(true);
     BlockingConnection connection = mqtt.blockingConnection();
     connection.connect();
     System.out.println("Connected!");
