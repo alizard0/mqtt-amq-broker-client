@@ -30,7 +30,7 @@ public class Application {
   }
 
   private static void publishMessage(final BlockingConnection connection, final String topicName, final String payload) throws Exception {
-    connection.publish(topicName, payload.getBytes(), QoS.AT_LEAST_ONCE, false);
+    connection.publish(topicName, payload.getBytes(), QoS.AT_MOST_ONCE, false);
   }
 
   private static BlockingConnection connect() throws Exception {
